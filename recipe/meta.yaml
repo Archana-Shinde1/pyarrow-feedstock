@@ -51,8 +51,10 @@ outputs:
         {{ "- arrow-cuda" if build_type == 'cuda' else "" }}
     requirements:
       build:
+        - numpy {{ numpy }}
         - libabseil {{ abseil_cpp }}
         - libprotobuf {{ libprotobuf }}
+        - python {{ python }}
         - grpc-cpp {{ grpc_cpp }}
         # to avoid https://gitlab.kitware.com/cmake/cmake/-/issues/18810
         - cmake 3.19        # [not s390x]
@@ -67,7 +69,7 @@ outputs:
         #- aws-sdk-cpp
         - libabseil {{ abseil_cpp }}
         - boost-cpp {{ boost }}
-        - brotli {{ brotli }}
+        - brotli
         - bzip2
         - c-ares
         - xsimd
@@ -89,7 +91,7 @@ outputs:
         - zlib
         - zstd {{ zstd }}
       run:
-        - brotli {{ brotli }}
+        - brotli
         - {{ pin_compatible('numpy', lower_bound='1.16') }}
         - cudatoolkit {{ cudatoolkit }}    #[build_type == 'cuda']
         - python {{ python }}
@@ -156,11 +158,15 @@ outputs:
         - make
         - {{ compiler('c') }}
         - {{ compiler('cxx') }}
+        - python {{ python }}
+        - numpy {{ numpy }}
       host:
         - {{ pin_subpackage('arrow-cpp', exact=True) }}
         - cudatoolkit {{ cudatoolkit }}  # [build_type == 'cuda']
         - cython
         - numpy {{ numpy }}
+        - grpc-cpp {{ grpc_cpp }}
+        - libprotobuf {{ libprotobuf }}
         - python {{ python }}
         - setuptools {{ setuptools }}
         - setuptools_scm
@@ -171,6 +177,8 @@ outputs:
         - {{ pin_compatible('numpy', lower_bound='1.16') }}
         - cudatoolkit {{ cudatoolkit }}  # [build_type == 'cuda']
         - python {{ python }}
+        - grpc-cpp {{ grpc_cpp }}
+        - libprotobuf {{ libprotobuf }}
       run_constrained:
         - arrow-cpp-proc * {{ build_ext }}
 
@@ -182,6 +190,8 @@ outputs:
       summary: Python libraries for Apache Arrow
 
     test:
+      requires :
+        - brotli
       imports:
         - pyarrow
         - pyarrow.dataset
